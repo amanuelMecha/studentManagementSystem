@@ -9,7 +9,8 @@ export default function Student(props) {
                 lname:<td>{props.lname}</td>
                 Major:<td> {props.major}</td>
                 email:<td> {props.email}</td>
-                <input onChange={props.fnameUpdate}></input>
+                {/* <input onChange={props.fnameUpdate}></input> */}
+                <button onClick={props.edit}>edit</button>
                 <td><button onClick={props.delete}>delete</button></td>
 
             </tr>

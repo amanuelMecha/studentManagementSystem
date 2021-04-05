@@ -4,6 +4,7 @@ export default class Searchstudent extends React.Component {
     state = { student: undefined, id: "" }
 
     search = (event) => {
+        console.log('eeeeeeee', event.target.value)
         this.setState({ id: event.target.value })
     }
     // search = (event) => {
@@ -12,13 +13,15 @@ export default class Searchstudent extends React.Component {
     // }
 
     searchFunction = () => {
-        let headers = { 'Authorization': this.props.tokenValue }
-
+        // let headers = { 'Authorization': this.props.tokenValue }
+        let headers = { 'Authorization': localStorage.getItem('token') }
+        console.log('search function')
         // axios.get('http://localhost:5000/api/v1/students/' + this.props.id, {
         //     headers: headers
         // })
+        console.log('token in searchStudentById', localStorage.getItem('token'))
         console.log('search', this.props.id)
-        axios.get('http://localhost:5000/api/v1/students/' + this.state.id)
+        axios.get('http://localhost:5000/api/v1/students/' + this.state.id, { headers: headers })
             .then(result => {
                 this.setState({ student: result.data.result })
             })
@@ -32,7 +35,7 @@ export default class Searchstudent extends React.Component {
         let student = null
         if (this.state.student) {
             student = (<div>
-                Id {this.state.student.Id} <br />
+                Id {this.state.student.id} <br />
                  fname {this.state.student.fname} <br />
                 lname {this.state.student.lname}  <br />
                  major {this.state.student.major}  <br />

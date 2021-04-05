@@ -24,21 +24,21 @@ export default class Signin extends React.Component {
     // }
 
     render() {
-        let token = null
-        if (this.state.token) {
-            token = (
-                <div>
-                    token <input value={this.state.token}></input>
-                </div>
-            )
-        }
+        // let token = null
+        // if (this.state.token) {
+        //     token = (
+        //         <div>
+        //             token <input value={this.state.token}></input>
+        //         </div>
+        //     )
+        // }
         return (
             <div>
                 <h4>signIn</h4>
-                <input placeholder='email' onChange={this.props.emailSignIn}></input>
-                <input placeholder='firt name' onChange={this.props.firtsNameSignIn}></input><br />
+                <input name='email' placeholder='email' onChange={this.props.onChangeEvent}></input>
+                <input name='password' placeholder='password' onChange={this.props.onChangeEvent}></input><br />
                 <button onClick={this.props.functionSignin}>Sign in</button>
-                {token}
+                {/* {token} */}
             </div>
         )
     }

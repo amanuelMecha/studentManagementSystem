@@ -11,6 +11,7 @@ var usersRouter = require('./routes/users');
 const studentsRouter = require('./routes/students')
 const studentsCopyRouter = require('./routes/studentsCopy');
 const authRouter = require('./routes/auth');
+var bcrypt = require('bcrypt');
 
 const uaa = require('./middlewares/uaa');
 const cors = require('cors')
@@ -47,7 +48,7 @@ app.use('/', function (req, res, next) {
 
 })
 
-//app.use(uaa.checkToken)
+app.use(uaa.checkToken)
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter)

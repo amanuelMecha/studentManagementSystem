@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 const { ObjectID } = require('mongodb');
 const fs = require('fs')
+var bcrypt = require('bcrypt');
+var salt = bcrypt.genSaltSync(10);
 
 
 router.get('/', function (req, res) {
@@ -14,9 +16,10 @@ router.get('/', function (req, res) {
 })
 
 router.get('/:id', function (req, res) {
-    console.log(typeof (req.params.id))
-    req.db.collection('students').findOne({ Id: req.params.id })
+    console.log(req.params.id)
+    req.db.collection('students').findOne({ id: { $eq: parseInt(req.params.id) } })
         .then(data => {
+            console.log(data)
             res.json({ status: "success", result: data })
         })
 
@@ -24,12 +27,13 @@ router.get('/:id', function (req, res) {
 })
 
 function validatingBody(req, res, next) {
+    console.log('validity check', req.body)
 
-    let email = req.body.email, Id = req.body.Id, fname = req.body.fname, lname = req.body.lname, major = req.body.major;
-    console.log('emal', req.body.Id === "")
-    if ((email === undefined || Id === undefined || fname === undefined ||
+
+    let email = req.body.email, id = req.body.id, fname = req.body.fname, lname = req.body.lname, major = req.body.major;
+    if ((email === undefined || id === undefined || fname === undefined ||
         lname === undefined || major === undefined) ||
-        (email === "" || Id === "" || fname === "" ||
+        (email === "" || id === "" || fname === "" ||
             lname === "" || major === "")) {
         res.json({ status: "Invalid body" })
     } else (
@@ -40,12 +44,20 @@ function validatingBody(req, res, next) {
 }
 
 router.post('/', validatingBody, function (req, res) {
-    console.log('posttttttttt')
+    console.log('post', req.body)
     req.db.collection('students').findOne({ email: req.body.email })
         .then(data => {
+
             if (!data) {
-                req.db.collection('students').insertOne(req.body)
+                let x = req.body.password;
+                console.log('before hasj', x)
+                let hash = bcrypt.hashSync(`${x}`, salt);
+                let payload = req.body
+                payload.password = hash
+                console.log('post body', payload)
+                req.db.collection('students').insertOne(payload)
                     .then(data => {
+                        console.log(data)
                         res.json({ status: 'success' })
                     })
             } else {
@@ -59,13 +71,18 @@ router.post('/', validatingBody, function (req, res) {
 })
 
 router.put('/:id', (req, res) => {
-    console.log('put methods')
+    console.log('put methods', req.body.email)
 
     console.log(req.body)
-    req.db.collection('students').findOne({ Id: req.params.id })
+    req.db.collection('students').findOne({ id: parseInt(req.params.id) })
         .then(data => {
             if (data) {
-                req.db.collection('students').updateOne({ Id: req.params.id }, { $set: { fname: req.body.fname } })
+                req.db.collection('students').updateOne({ id: parseInt(req.params.id) }, {
+                    $set: {
+                        fname: req.body.fname,
+                        lname: req.body.lname, major: req.body.major, email: req.body.email
+                    }
+                })
                     .then(data => {
                         res.json({ status: 'success' })
                     })
@@ -80,9 +97,11 @@ router.put('/:id', (req, res) => {
 })
 
 router.delete('/:id', (req, res) => {
-    console.log(typeof (req.params.id))
-    let Id = req.params.id
-    req.db.collection('students').removeOne({ Id: Id })
+    console.log('delete function before bcrypt')
+    //console.log(id)
+    // let password = bcrypt.compareSync(`${req.body.password}`, data.password);
+    console.log('delete function')
+    req.db.collection('students').removeOne({ id: parseInt(req.params.id) })
         .then(data => {
             res.json({ status: 'success' })
         })

@@ -2,38 +2,28 @@ import React from "react";
 import axios from 'axios'
 
 export default class AddNewStudent extends React.Component {
-    state = { id: "", major: "", email: "", fname: "", lname: "" }
+    state = { id: "", major: "", email: "", fname: "", lname: "", password: "" }
 
-    IdOChange = (event) => {
-        console.log("id", event.target.value)
-        this.setState({ id: event.target.value })
-    }
-    majorOChange = (event) => {
-        this.setState({ major: event.target.value })
-    }
-    emailOChange = (event) => {
-        this.setState({ email: event.target.value })
-    }
-
-    fnameOChange = (event) => {
-        this.setState({ fname: event.target.value })
-    }
-    lnameOChange = (event) => {
-        this.setState({ lname: event.target.value })
+    onChangEvent = (event) => {
+        let name = event.target.name
+        let value = event.target.value
+        this.setState({ [name]: value })
     }
     addNewStudentfun = () => {
-        console.log('daveeeeeeeeeeeeeee', this.state.token)
+        let id = Math.floor(Math.random() * 999) + 100;
         const object = {
-            Id: this.state.id, fname: this.state.fname, lname: this.state.lname,
-            major: this.state.major, email: this.state.email,
+            id: id, fname: this.state.fname, lname: this.state.lname,
+            major: this.state.major, email: this.state.email, password: this.state.password
         }
+       
         // let headers = { 'Authorization': this.state.token }
-        console.log('create function', object)
+        let headers = { 'Authorization': localStorage.getItem('token') }
         // axios.post('http://localhost:5000/api/v1/students', object, {
         //     headers: headers
         // })
-        axios.post('http://localhost:5000/api/v1/students', object)
+        axios.post('http://localhost:5000/api/v1/students', object, { headers: headers })
             .then(res => {
+                console.log(res)
                 alert(res.data.status)
                 // this.fetchState()
             })
@@ -45,12 +35,12 @@ export default class AddNewStudent extends React.Component {
     render() {
         return (<div>
 
-            <input onChange={(event) => { this.IdOChange(event) }} placeholder="id" ></input>
-            <input onChange={(event) => { this.fnameOChange(event) }} placeholder="first name"></input>
-            <input onChange={(event) => { this.lnameOChange(event) }} placeholder=" last name"></input>
-            <input onChange={(event) => { this.majorOChange(event) }} placeholder="major"></input>
-            <input onChange={(event) => { this.emailOChange(event) }} placeholder="email"></input>
 
+            <input name="fname" onChange={(event) => { this.onChangEvent(event) }} placeholder="first name"></input>
+            <input name="lname" onChange={(event) => { this.onChangEvent(event) }} placeholder=" last name"></input>
+            <input name="major" onChange={(event) => { this.onChangEvent(event) }} placeholder="major"></input>
+            <input name="email" onChange={(event) => { this.onChangEvent(event) }} placeholder="email"></input>
+            <input name="password" onChange={(event) => { this.onChangEvent(event) }} placeholder="password" ></input>
             <button onClick={this.addNewStudentfun} > addNewStudent</button>
         </div>
         )
